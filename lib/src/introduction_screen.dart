@@ -36,6 +36,11 @@ class IntroductionScreen extends StatefulWidget {
   /// @Default `false`
   final bool showSkipButton;
 
+  /// Is the Skip button should be display even if its last page
+  ///
+  /// @Default `false`
+  final bool keepSkipButton;
+
   /// Is the Next button should be display
   ///
   /// @Default `true`
@@ -102,6 +107,7 @@ class IntroductionScreen extends StatefulWidget {
     this.skip,
     this.next,
     this.showSkipButton = false,
+    this.keepSkipButton = false,
     this.showNextButton = true,
     this.isProgress = true,
     this.isProgressTap = true,
@@ -152,7 +158,9 @@ class IntroductionScreenState extends State<IntroductionScreen> {
 
   Future<void> _onSkip() async {
     if (widget.onSkip != null) return widget.onSkip();
-    await skipToEnd();
+    if (!widget.keepSkipButton) {
+      await skipToEnd();
+    }
   }
 
   Future<void> skipToEnd() async {
@@ -186,7 +194,9 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   @override
   Widget build(BuildContext context) {
     final isLastPage = (_currentPage.round() == widget.pages.length - 1);
-    bool isSkipBtn = (!_isSkipPressed && !isLastPage && widget.showSkipButton);
+    bool isSkipBtn = (!_isSkipPressed &&
+        (widget.keepSkipButton || !isLastPage) &&
+        widget.showSkipButton);
 
     final skipBtn = IntroButton(
       child: widget.skip,
