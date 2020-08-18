@@ -31,6 +31,9 @@ class IntroductionScreen extends StatefulWidget {
   /// Next button
   final Widget next;
 
+  /// If page Validated go Next by formKey
+  final GlobalKey<FormState> canGoNext;
+
   /// Is the Skip button should be display
   ///
   /// @Default `false`
@@ -106,6 +109,7 @@ class IntroductionScreen extends StatefulWidget {
     this.onChange,
     this.skip,
     this.next,
+    this.canGoNext,
     this.showSkipButton = false,
     this.keepSkipButton = false,
     this.showNextButton = true,
@@ -205,7 +209,17 @@ class IntroductionScreenState extends State<IntroductionScreen> {
 
     final nextBtn = IntroButton(
       child: widget.next,
-      onPressed: widget.showNextButton && !_isScrolling ? next : null,
+      onPressed: () {
+        if (widget.showNextButton && !_isScrolling) {
+          if (widget.canGoNext != null) {
+            if (widget.canGoNext.currentState.validate()) {
+              next();
+            }
+          } else {
+            next();
+          }
+        }
+      },
     );
 
     final doneBtn = IntroButton(
